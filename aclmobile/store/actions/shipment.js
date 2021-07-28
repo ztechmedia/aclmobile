@@ -193,9 +193,9 @@ export const changeAwbStatus = (awbNumber, status) => async (dispatch) => {
 };
 
 export const changeAwbStatusWithReason =
-  (awbNumber, status, reason) => async (dispatch, getState) => {
+  (awbNumber, status, reason, taskId) => async (dispatch, getState) => {
     const rider = getState().auth.user.Rider_Name;
-    const data = { awbNumber, status, reason, rider };
+    const data = { awbNumber, status, reason, rider, taskId };
 
     try {
       dispatch({ type: "UI_LOADING_START" });

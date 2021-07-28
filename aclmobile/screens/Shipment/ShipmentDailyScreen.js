@@ -19,6 +19,8 @@ import {
 import { indoDate } from "../../utils/utility";
 //Constant
 import Color from "../../constants/Color";
+//Utils
+import { uuid } from "../../utils/utility";
 
 const ShipmentDailyScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -67,7 +69,7 @@ const ShipmentDailyScreen = ({ navigation }) => {
   if (!loading && shipments && shipments.length > 0) {
     shipmentsList = (
       <FlatList
-        keyExtractor={(item) => item.AWB_No + Math.random()}
+        keyExtractor={(item) => `${item.AWB_No}${uuid()}`}
         onRefresh={loadShipmentHandler}
         refreshing={loading}
         data={shipments}
@@ -136,14 +138,12 @@ const ShipmentDailyScreen = ({ navigation }) => {
                 bottom: 0,
                 width: "100%",
                 height: 55,
-                backgroundColor: "rgba(0,0,0,0.5)",
+                backgroundColor: "rgba(0,0,0,0.2)",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <Text bold color="white">
-                Load more...
-              </Text>
+              <ActivityIndicator />
             </View>
           )}
         </View>

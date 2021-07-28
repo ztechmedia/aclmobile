@@ -1,8 +1,9 @@
 import React from "react";
 //UI
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet } from "react-native";
 import {
   HStack,
+  VStack,
   Stack,
   View,
   Text,
@@ -10,10 +11,13 @@ import {
   Icon,
   IconButton,
   Image,
+  Box,
 } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 //Constants
 import Color from "../../../constants/Color";
+//Components
+import Divider from "../Divider";
 //Image
 import MovingTruck from "../../../assets/img/moving_truck.png";
 import DocumentDelivered from "../../../assets/img/document_delivered.png";
@@ -28,6 +32,8 @@ const CustomText = ({ children, ...props }) => (
 
 const ShipmentCard = ({ item, onPress }) => {
   const bg = useColorModeValue("white", Color.primaryDark);
+  const iconColor = useColorModeValue(Color.primaryDark, "white");
+
   let activeColor = "#ddd";
   let sourceImage = Unloading;
 
@@ -79,32 +85,86 @@ const ShipmentCard = ({ item, onPress }) => {
 
         <View style={styles.RightContent} py={1}>
           <HStack>
-            <ScrollView style={styles.Description}>
-              <CustomText>AWB No:</CustomText>
-              <CustomText bold> {item.AWB_No}</CustomText>
-              <CustomText>Account Name:</CustomText>
-              <CustomText bold>{item.Account_Name}</CustomText>
-              <CustomText>Destination:</CustomText>
-              <CustomText bold>{item.Destination}</CustomText>
-              <CustomText>Consignee Name</CustomText>
-              <CustomText bold>{item.Consignee_Name}</CustomText>
-              <CustomText>Consignee Addres</CustomText>
-              <CustomText bold>{item.Consignee_Addr}</CustomText>
-            </ScrollView>
+            <View style={styles.Description}>
+              <View>
+                <CustomText>AWB No</CustomText>
+                <CustomText bold>{item.AWB_No}</CustomText>
+                <CustomText>Location</CustomText>
+                <CustomText bold>{item.Location}</CustomText>
+                <CustomText>Account Name</CustomText>
+                <CustomText bold>{item.Account_Name}</CustomText>
+                <View
+                  mt={2}
+                  mb={2}
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Box
+                    bg="rgba(0,0,0,0.5)"
+                    borderRadius={10}
+                    borderWidth={1}
+                    borderColor="#ccc"
+                    p={2}
+                    w="40%"
+                    alignItems="center"
+                  >
+                    <Text fontSize={10} color="white">
+                      {item.Origin}
+                    </Text>
+                  </Box>
 
-            <View style={styles.ArrowCard}>
-              <IconButton
-                _pressed={{ backgroundColor: Color.pressed2 }}
-                onPress={onPress}
-                icon={
-                  <Icon
-                    as={MaterialIcons}
-                    name="arrow-forward-ios"
-                    color="gray.400"
-                    size="md"
+                  <Ionicons
+                    name="arrow-forward-outline"
+                    size={24}
+                    color={iconColor}
                   />
-                }
-              />
+
+                  <Box
+                    bg="rgba(0,0,0,0.5)"
+                    borderRadius={10}
+                    borderWidth={1}
+                    borderColor="#ccc"
+                    p={2}
+                    w="40%"
+                    alignItems="center"
+                  >
+                    <Text fontSize={10} color="white">
+                      {item.Destination}
+                    </Text>
+                  </Box>
+                </View>
+                <Divider />
+                <HStack mt={1}>
+                  <VStack w="80%">
+                    <CustomText>Consignee Name</CustomText>
+                    <CustomText bold>{item.Consignee_Name}</CustomText>
+                  </VStack>
+                  <IconButton
+                    _pressed={{ backgroundColor: Color.pressed2 }}
+                    onPress={onPress}
+                    icon={
+                      <Icon
+                        as={MaterialIcons}
+                        name="double-arrow"
+                        color="gray.400"
+                        size="md"
+                      />
+                    }
+                  />
+                </HStack>
+              </View>
+              <View
+                alignItems="center"
+                borderColor="rgba(0,0,0,0.5)"
+                borderWidth={1}
+                p={2}
+                rounded={5}
+                style={{ position: "absolute", top: 0, right: 0 }}
+              >
+                <CustomText bold>{item.Transport}</CustomText>
+                <CustomText bold>{item.Type_Transport}</CustomText>
+              </View>
             </View>
           </HStack>
         </View>
@@ -115,7 +175,7 @@ const ShipmentCard = ({ item, onPress }) => {
 
 const styles = StyleSheet.create({
   Description: {
-    width: "80%",
+    width: "95%",
   },
   ArrowCard: {
     width: "20%",

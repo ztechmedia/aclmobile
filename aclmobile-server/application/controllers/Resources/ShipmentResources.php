@@ -20,14 +20,16 @@ class ShipmentResources
         return [
             'ID' => $awb->ID,
             'AWB_No' => $awb->AWB_No,
+            'Location' => $awb->Location,
             'Account_Name' => $awb->Account_Name,
             'Origin' => $awb->Origin,
             'Destination' => $awb->Destination,
             'Consignee_Name' => $awb->Consignee_Name,
-            'Consignee_Addr' => $awb->Consignee_Addr,
+            'Transport' => $awb->Transport,
+            'Type_Transport' => $awb->Type_Transport,
             'AWB_Status' => $awb->AWB_Status,
-            'AWB_Status_History' => $awb->AWB_Status_History ? unserialize($awb->AWB_Status_History) : fasle,
-            'AWB_Date' => revDate($awb->AWB_Date),
+            'AWB_Status_History' => $awb->AWB_Status_History ? unserialize($awb->AWB_Status_History) : false,
+            'AWB_Date' => revDate($awb->AWB_Date)
         ];
     }
 
@@ -71,11 +73,13 @@ class ShipmentResources
             $shipments[] = [
                 'ID' => $awb->ID,
                 'AWB_No' => $awb->AWB_No,
+                'Location' => $awb->Location,
                 'Account_Name' => $awb->Account_Name,
                 'Origin' => $awb->Origin,
                 'Destination' => $awb->Destination,
                 'Consignee_Name' => $awb->Consignee_Name,
-                'Consignee_Addr' => $awb->Consignee_Addr,
+                'Transport' => $awb->Transport,
+                'Type_Transport' => $awb->Type_Transport,
                 'AWB_Status' => $awb->AWB_Status,
                 'AWB_Date' => revDate($awb->AWB_Date)
             ];
@@ -97,7 +101,31 @@ class ShipmentResources
             'Outgoing_Date' => $outgoing->Outgoing_Date,
             'Status_Delivery' => $outgoing->Status_Delivery,
             'LatLong' => $outgoing->LatLong,
+            'AWB_Reasons' => $outgoing->AWB_Reasons,
             'Foto_AWB' => $outgoing->Foto_AWB,
         ];
+    }
+
+    public function OutgoingCollections($outgoings)
+    {
+        $do = [];
+        foreach ($outgoings as $outgoing) {
+            $do[] = [
+                'ID' => $outgoing->ID,
+                'Task_ID' => $outgoing->Task_ID,
+                'Customer_Name' => $outgoing->Customer_Name,
+                'Consignee_Name' => $outgoing->Consignee_Name,
+                'Destination' => $outgoing->Destination,
+                'Consignee_Addr' => $outgoing->Consignee_Addr,
+                'Container_Police_No' => $outgoing->Container_Police_No,
+                'Outgoing_Date' => $outgoing->Outgoing_Date,
+                'Status_Delivery' => $outgoing->Status_Delivery,
+                'LatLong' => $outgoing->LatLong,
+                'AWB_Reasons' => $outgoing->AWB_Reasons,
+                'Foto_AWB' => $outgoing->Foto_AWB,
+            ];
+        }
+
+        return $do;
     }
 }

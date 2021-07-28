@@ -29,8 +29,8 @@ class AwbModel extends CI_Model
         }
 
         //Query to get list of awb
-        $this->db->select('ID, AWB_No, Account_Name, Origin, Destination, Consignee_Name,
-                            Consignee_Addr, AWB_Status, AWB_Date');
+        $this->db->select('ID, AWB_No, Location, Account_Name, Origin, Destination, Consignee_Name, 
+                            Transport, Type_Transport, AWB_Status, AWB_Date');
         $this->db->from('awb');
         $this->db->where('Rider', $request->rider);
         $this->db->where('AWB_Date', $date);
@@ -65,8 +65,8 @@ class AwbModel extends CI_Model
         $next = $endIndex < $total ? $request->page + 1 : false;
 
         //Query to get list of awb
-        $this->db->select('ID, AWB_No, Account_Name, Origin, Destination, Consignee_Name,
-                            Consignee_Addr, AWB_Status, AWB_Date');
+        $this->db->select('ID, AWB_No, Location, Account_Name, Origin, Destination, Consignee_Name, 
+                            Transport, Type_Transport, AWB_Status, AWB_Date');
         $this->db->from('awb');
         $this->db->where('Rider', $request->rider);
         $this->db->where('YEAR(AWB_Date)', $request->year);
@@ -87,7 +87,8 @@ class AwbModel extends CI_Model
     {
         return $this->wms
             ->select('ID, Task_ID, Customer_Name, Consignee_Name, Destination, Consignee_Addr, 
-                        Container_Police_No, Outgoing_Date, Status_Delivery, Foto_AWB, Status_Delivery, LatLong')
+                        Container_Police_No, Outgoing_Date, Status_Delivery, AWB_Reasons, 
+                        Foto_AWB, Status_Delivery, LatLong')
             ->from('outgoing')
             ->where('AWB_No', $awbNumber)
             ->get()

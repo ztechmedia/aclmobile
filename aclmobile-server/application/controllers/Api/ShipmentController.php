@@ -83,7 +83,7 @@ class ShipmentController extends CI_Controller
         $outgoings = $this->AWB->getOutgoings($request->awbNumber);
         $lists = count($outgoings) > 0 ? $outgoings : [];
         response([
-            'outgoings' => $lists,
+            'outgoings' => $this->resources->OutgoingCollections($lists),
         ]);
     }
 
@@ -110,17 +110,16 @@ class ShipmentController extends CI_Controller
     {
         $request = fileGetContent();
         $awbNumber = $request->awbNumber;
+        $taskId = $request->taskId;
         $status = $request->status;
-        $reason = $status !== "ATTEMP DELIVERY" && 
-                    $status !== "FAILED DELIVERY" && 
-                    $status !== "CANCELED" ? "" : $request->reason;
-
+        $reason = $request->reason;
         $rider = $request->rider;
 
         $awb = $this->FBM->getWhere('awb', ['AWB_No' => $awbNumber])->row();
         $history = $awb->AWB_Status_History;
         if (!$history) {
             $history[] = [
+                'Task_ID' => $taskId,
                 'AWB_Status' => $status,
                 'Reason' => $reason,
                 'Change_On' => toIndoDatetime(date('Y-m-d')),
@@ -129,6 +128,7 @@ class ShipmentController extends CI_Controller
         } else {
             $history = unserialize($history);
             array_push($history, [
+                'Task_ID' => $taskId,
                 'AWB_Status' => $status,
                 'Reason' => $reason,
                 'Change_On' => toIndoDatetime(date('Y-m-d')),
@@ -136,34 +136,15 @@ class ShipmentController extends CI_Controller
             ]);
         }
 
-        $data = [
-            'AWB_Status' => $status,
-            'AWB_Status_History' => serialize($history),
-        ];
+        $awbData = [ 'AWB_Status_History' => serialize($history) ];
+        $outgoingData = [ 'AWB_Reasons' => $reason ];
 
-        $awb = $this->FBM->update('awb', 'AWB_No', $awbNumber, $data);
-
-        $doList = [];
-        $outgoings = $this->WBM->getWhere('outgoing', ['AWB_No' => $awbNumber])->result();
-
-        foreach ($outgoings as $outgoing) {
-            if ($outgoing->Status_Delivery !== "DELIVERY") {
-                $doList[] = [
-                    "ID" => $outgoing->ID,
-                    "AWB_Reasons" => $reason,
-                ];
-            }
-        }
-
-        $updateStatus = false;
-        if (count($doList) > 0) {
-            $updateOutgoing = $this->WBM->updateMultiple('outgoing', $doList, 'ID');
-            $updateStatus = true;
-        }
-
+        $awb = $this->FBM->update('awb', 'AWB_No', $awbNumber, $awbData);
+        $outgoing = $this->WBM->update('outgoing', 'Task_ID', $taskId, $outgoingData);
+        
         response([
             'awb' => $this->resources->AwbAdvance($awb),
-            'outgoing_update' => $updateStatus,
+            'outgoing' => $this->resources->Outgoing($outgoing),
         ]);
     }
 

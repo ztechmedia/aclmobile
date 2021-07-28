@@ -1,6 +1,8 @@
 import React from "react";
 //UI
 import { HStack, VStack, Text, useColorModeValue } from "native-base";
+//Components
+import Divider from "../Divider";
 //Constants
 import Color from "../../../constants/Color";
 
@@ -9,24 +11,18 @@ const ShipmentStatusCard = ({ awb }) => {
 
   return (
     <VStack bg={bg} rounded={5} w="100%" p={2} mb={2}>
+      <Text fontSize={10} bold>
+        {awb.Task_ID}
+      </Text>
+      <Divider />
       <HStack alignItems="center" justifyContent="space-between">
         <VStack>
           <Text bold fontSize={10}>
             Status
           </Text>
-
-          {awb.AWB_Status !== "ATTEMP DELIVERY" &&
-          awb.AWB_Status !== "FAILED DELIVERY" &&
-          awb.AWB_Status !== "CANCELED" ? (
-            <Text fontSize={10} color="green.500">
-              {awb.AWB_Status}
-            </Text>
-          ) : (
-            <Text fontSize={10} color="red.500">
-              {awb.AWB_Status}
-            </Text>
-          )}
-
+          <Text fontSize={10} color="red.500">
+            {awb.AWB_Status}
+          </Text>
           <Text bold fontSize={10}>
             Reason
           </Text>

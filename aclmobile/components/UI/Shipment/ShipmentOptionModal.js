@@ -1,6 +1,6 @@
 import React, { useReducer, useCallback } from "react";
 //UI
-import { HStack, Text } from "native-base";
+import { HStack, Text, View } from "native-base";
 //Component
 import Modal from "../Modal";
 import Button from "../Button";
@@ -15,15 +15,15 @@ const ShipmentOptionModal = ({
   toggle,
   loading,
   onChangeStatus,
-  pending,
+  taskId,
 }) => {
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
       reason: null,
-      status: pending ? "PROCESSED" : "ATTEMP DELIVERY",
+      status: "ATTEMP DELIVERY",
     },
     inputValidities: {
-      phone: false,
+      reason: false,
       password: true,
     },
     formIsValid: false,
@@ -42,7 +42,11 @@ const ShipmentOptionModal = ({
   );
 
   const changeStatusHandler = () => {
-    onChangeStatus(formState.inputValues.status, formState.inputValues.reason);
+    onChangeStatus(
+      formState.inputValues.status,
+      formState.inputValues.reason,
+      taskId
+    );
   };
 
   const Footer = () => {
@@ -57,6 +61,7 @@ const ShipmentOptionModal = ({
           onPress={changeStatusHandler}
           isLoading={loading}
           isLoadingText="Memproses..."
+          isDisabled={!formState.formIsValid}
         >
           Konfirmasi
         </Button>
@@ -64,35 +69,42 @@ const ShipmentOptionModal = ({
     );
   };
 
-  const options = !pending
-    ? ["ATTEMP DELIVERY", "FAILED DELIVERY", "CANCELED"]
-    : ["PROCESSED", "PROCESSED2", "MUAT BARANG", "SELESAI MUAT", "DELIVERY"];
-
   return (
     <Modal show={show} toggle={toggle} footer={Footer}>
-      <Text>Silakan Isi Alasan Tindakan:</Text>
-      <Input
-        id="reason"
-        placeholder="Alasan Tindakan"
-        inputType="text"
-        label="Alasan"
-        isRequired={true}
-        onInputChange={inputChangeHandler}
-        initialValue={formState.inputValues.reason}
-        required
-        mt={2}
-      />
+      {taskId ? (
+        <>
+          <View alignItems="center" justifyContent="center" mt={5} mb={5}>
+            <Text>Kendala pengiriman DO Task ID:</Text>
+            <Text bold>{taskId}</Text>
+          </View>
 
-      <Input
-        id="status"
-        inputType="select"
-        label={pending ? "Mulai Dari Status" : "Status Pembatalan"}
-        isRequired={true}
-        onInputChange={inputChangeHandler}
-        initialValue={formState.inputValues.status}
-        options={options}
-      />
-      <Text>Jika sudah yakin silahkan lanjutkan proses berikutnya!</Text>
+          <Input
+            id="reason"
+            placeholder="Alasan"
+            inputType="text"
+            label="Alasan"
+            isRequired={true}
+            onInputChange={inputChangeHandler}
+            initialValue={formState.inputValues.reason}
+            required
+            mt={2}
+          />
+
+          <Input
+            id="status"
+            inputType="select"
+            label="Status"
+            isRequired={true}
+            onInputChange={inputChangeHandler}
+            initialValue={formState.inputValues.status}
+            options={["ATTEMP DELIVERY", "FAILED DELIVERY", "CANCELED"]}
+          />
+        </>
+      ) : (
+        <View alignItems="center" justifyContent="center" mt={5} mb={5}>
+          <Text>Nomor Delivery Order belum dipilih!</Text>
+        </View>
+      )}
     </Modal>
   );
 };

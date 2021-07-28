@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //UI
+import Pie from "react-native-pie";
 import { ScrollView, Dimensions } from "react-native";
 import { View, Text, Stack, HStack } from "native-base";
 //Component
@@ -36,28 +37,64 @@ const HomeScreen = ({ navigation }) => {
   if (performance) {
     const { Shipment_Finish, Shipment_Canceled, Shipment_Failed } = performance;
 
+    let total = Shipment_Finish + Shipment_Canceled + Shipment_Failed;
+    let finish = Shipment_Finish > 0 ? (Shipment_Finish / total) * 100 : 0;
+    let failed = Shipment_Failed > 0 ? (Shipment_Failed / total) * 100 : 0;
+    let canceled =
+      Shipment_Canceled > 0 ? (Shipment_Canceled / total) * 100 : 0;
+
     performanceScreen = (
-      <Stack w="90%" mx={5}>
-        <HStack>
-          <Card w="100%" bg="blue.500" title="Finish" value={Shipment_Finish} />
-        </HStack>
-        <HStack mt={1}>
-          <Card
-            mr={1}
-            w="49%"
-            bg="orange.500"
-            title="Canceled"
-            value={Shipment_Canceled}
+      <>
+        <View w="90%" mx={5} alignItems="center" mb={1}>
+          <Text>Driver Performance</Text>
+        </View>
+        <View alignItems="center" justifyContent="center" w="100%" my={2}>
+          <Pie
+            radius={80}
+            sections={[
+              {
+                percentage: finish,
+                color: "#3b82f6",
+              },
+              {
+                percentage: failed,
+                color: "#ef4444",
+              },
+              {
+                percentage: canceled,
+                color: "#f97316",
+              },
+            ]}
+            strokeCap={"butt"}
           />
-          <Card
-            mr={1}
-            w="49%"
-            bg="red.500"
-            title="Failed"
-            value={Shipment_Failed}
-          />
-        </HStack>
-      </Stack>
+        </View>
+        <Stack w="90%" mx={5}>
+          <HStack>
+            <Card
+              w="100%"
+              bg="blue.500"
+              title="Finish"
+              value={Shipment_Finish}
+            />
+          </HStack>
+          <HStack mt={1}>
+            <Card
+              mr={1}
+              w="49%"
+              bg="orange.500"
+              title="Canceled"
+              value={Shipment_Canceled}
+            />
+            <Card
+              mr={1}
+              w="49%"
+              bg="red.500"
+              title="Failed"
+              value={Shipment_Failed}
+            />
+          </HStack>
+        </Stack>
+      </>
     );
   }
 

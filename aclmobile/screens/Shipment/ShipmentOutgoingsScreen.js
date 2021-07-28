@@ -5,6 +5,8 @@ import { ScrollView } from "react-native";
 import ColorModeWrapper from "../../components/UI/Center";
 import AppBar from "../../components/UI/AppBar";
 import OutgoingCard from "../../components/UI/Shipment/ShipmentCardOutgoingDetail";
+//Utils
+import { uuid } from "../../utils/utility";
 
 const ShipmentOutgoingsScreen = ({ navigation }) => {
   const awbNumber = navigation.getParam("awbNumber");
@@ -35,7 +37,7 @@ const ShipmentOutgoingsScreen = ({ navigation }) => {
           {outgoings.map((outgoing) => (
             <OutgoingCard
               outgoing={outgoing}
-              key={`${outgoing.ID}+${Math.random()}`}
+              key={uuid()}
               onPress={() => documentHandler(outgoing)}
             />
           ))}

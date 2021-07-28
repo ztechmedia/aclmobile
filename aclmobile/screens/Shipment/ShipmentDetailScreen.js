@@ -13,6 +13,7 @@ import {
   HStack,
   Box,
   Accordion,
+  useToast,
 } from "native-base";
 import { ScrollView, StyleSheet, Dimensions } from "react-native";
 import { MaterialIcons, Ionicons, Octicons } from "@expo/vector-icons";
@@ -88,8 +89,10 @@ const CustomButton = ({ status, onPress, style }) => {
 
 const ShipmentDetailScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const [showModal, setShowModal] = useState(false);
   const [showOptionModal, setShowOptionModal] = useState(false);
+  const [taskId, setTaskId] = useState();
   const bg = useColorModeValue("white", Color.primaryDark);
   const iconColor = useColorModeValue(Color.primaryDark, "white");
 
@@ -117,10 +120,16 @@ const ShipmentDetailScreen = ({ navigation }) => {
     setShowOptionModal(false);
   };
 
-  const changeOptionHandler = (status, reason) => {
-    dispatch(changeAwbStatusWithReason(awbNumber, status, reason));
+  const changeOptionHandler = (status, reason, taskId) => {
+    dispatch(changeAwbStatusWithReason(awbNumber, status, reason, taskId));
     setShowModal(false);
     setShowOptionModal(false);
+    setTaskId(null);
+  };
+
+  const changeTaskIdHandler = (taskId) => {
+    setTaskId(taskId);
+    toast.show({ title: `Task ID: ${taskId} dipilih!` });
   };
 
   const modalHandler = (status) => {
@@ -150,17 +159,16 @@ const ShipmentDetailScreen = ({ navigation }) => {
         animated: true,
       });
     }
-
-    if (goBack === "ShipmentMonthly") {
-      dispatch(shipmentMonthly());
-    } else if (goBack === "ShipmentDaily") {
-      dispatch(shipmentDaily());
-    }
   }, [shipment]);
 
   useEffect(() => {
     dispatch(shipmentByAwb(awbNumber));
     dispatch(shipmentOutgoings(awbNumber));
+    if (goBack === "ShipmentMonthly") {
+      dispatch(shipmentMonthly());
+    } else if (goBack === "ShipmentDaily") {
+      dispatch(shipmentDaily());
+    }
   }, [awbNumber, submitSuccess]);
 
   let awb = <ActivityIndicator />;
@@ -174,12 +182,17 @@ const ShipmentDetailScreen = ({ navigation }) => {
             style={{ backgroundColor: bg }}
             _expanded={{ backgroundColor: bg }}
           >
-            <Text>AWB Detail Outgoings</Text>
+            <Text>Daftar Delivery Order</Text>
             <Accordion.Icon />
           </Accordion.Summary>
           <Accordion.Details>
             {outgoings.map((outgoing) => (
-              <OutgoingCard outgoing={outgoing} key={uuid()} />
+              <OutgoingCard
+                isSelected={outgoing.Task_ID === taskId}
+                onSetTaskId={changeTaskIdHandler}
+                outgoing={outgoing}
+                key={uuid()}
+              />
             ))}
           </Accordion.Details>
         </Accordion.Item>
@@ -232,13 +245,12 @@ const ShipmentDetailScreen = ({ navigation }) => {
           ) : (
             <IconButton
               mt={3}
-              onPress={toggleOptionModal}
               rounded={30}
               _pressed={{
                 backgroundColor: "rgba(0,0,0,0.5)",
               }}
               icon={
-                <Icon as={Octicons} name="stop" color="green.600" size="sm" />
+                <Icon as={Octicons} name="stop" color="gray.600" size="sm" />
               }
             />
           )}
@@ -307,7 +319,7 @@ const ShipmentDetailScreen = ({ navigation }) => {
                   style={{ backgroundColor: bg }}
                   _expanded={{ backgroundColor: bg }}
                 >
-                  <Text>History AWB Status</Text>
+                  <Text>History Kendala Deliver Order</Text>
                   <Accordion.Icon />
                 </Accordion.Summary>
                 <Accordion.Details>
@@ -497,7 +509,7 @@ const ShipmentDetailScreen = ({ navigation }) => {
           show={showOptionModal}
           toggle={toggleOptionModal}
           loading={btnLoading}
-          pending={pending}
+          taskId={taskId}
           onChangeStatus={changeOptionHandler}
         />
       </>
