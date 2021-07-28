@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../../Users/macbookpro/Sites/adib_fleet"
+		},
+		{
+			"path": "../../../../Users/macbookpro/Sites/adib_branch"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
